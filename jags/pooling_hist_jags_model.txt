@@ -1,0 +1,14 @@
+model {
+    ##Priors
+    ##Regression coefficients
+    ##Intercept and time effect
+    beta ~ dmnorm(mean_beta, prec_beta)
+
+    ##Precision
+    tau ~ dgamma(1e-3, 1e-3)
+    
+    for (i in 1:N) {
+        response[i] ~ dnorm(mu[i], tau) 
+        mu[i] <- fixef[i,] %*% beta
+    }
+}

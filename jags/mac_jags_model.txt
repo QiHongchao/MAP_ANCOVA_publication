@@ -1,0 +1,41 @@
+model {
+   ##Historical likelihood
+   ##Each historical study
+   for (i in 1:H){
+   beta_historical[i,1:num_fixef] ~ dmnorm(beta, Omega_beta)
+   tau0[i] ~ dgamma(1e-3, 1e-3)
+   
+   ##Each observation in ith historical study
+    for (j in studyindex[2*(i-1)+1]: studyindex[2*i]) {
+        response_historical[j] ~ dnorm(mu0[j], tau0[i]) 
+        mu0[j] <- fixef_historical[j,] %*% beta_historical[i,1:num_fixef]
+    }
+  }
+      
+    ##Priors
+    ##Regression coefficients
+    ##Intercept and time effect
+    beta ~ dmnorm(mean_beta, prec_beta)
+    
+    ##Sigma_beta
+    sigma_beta0 ~ dnorm(0, prec_sigma_beta0) T(0,)
+    sigma_beta1 ~ dnorm(0, prec_sigma_beta1) T(0,)
+    rho ~ dunif(-1, 0)
+    Sigma_beta[1, 1] <- sigma_beta0^2  
+    Sigma_beta[2, 2] <- sigma_beta1^2
+    Sigma_beta[1, 2] <- rho*sigma_beta0*sigma_beta1
+    Sigma_beta[2, 1] <- Sigma_beta[1, 2]
+    Omega_beta <- inverse(Sigma_beta)
+    
+    ##New trial effect
+    beta_new ~ dmnorm(beta, Omega_beta)
+    lambda ~ dnorm(0, 1e-4)
+
+    ##New trial likelihood
+    tau ~ dgamma(1e-3, 1e-3)
+    
+    for (i in 1:N) {
+        response_new[i] ~ dnorm(mu[i], tau) 
+        mu[i] <- fixef_new[i,] %*% c(beta_new, lambda)
+    }
+}

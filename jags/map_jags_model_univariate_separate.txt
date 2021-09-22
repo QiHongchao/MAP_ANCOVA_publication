@@ -1,0 +1,25 @@
+model {
+   ##Historical likelihood
+   ##Each historical study
+   for (i in 1:H){
+   beta0_historical[i] ~ dnorm(beta0, 1/sigma_beta0^2)
+   beta1_historical[i] ~ dnorm(0, 1e-2)
+   tau0[i] ~ dgamma(1e-3, 1e-3)
+   
+   ##Each observation in ith historical study
+    for (j in studyindex[2*(i-1)+1]: studyindex[2*i]) {
+        response_historical[j] ~ dnorm(mu0[j], tau0[i]) 
+        mu0[j] <- fixef_historical[j,] %*% c(beta0_historical[i], beta1_historical[i])
+    }
+  }
+      
+    ##Priors
+    ##Intercept
+    beta0 ~ dnorm(0, 1e-4)
+    
+    ##Sigma_beta
+    sigma_beta0 ~ dnorm(0, prec_sigma_beta0) T(0,)
+    
+    ##New trial effect
+    beta0_new ~ dnorm(beta0, 1/sigma_beta0^2)
+}
