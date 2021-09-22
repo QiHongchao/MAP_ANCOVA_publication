@@ -1,6 +1,6 @@
 # MAP_ANCOVA_publication
  
-The repository is used to store the R scripts and the JAGS models (stored in "./jags/") for the paper titled "Incorporating historical control information in ANCOVA models using the meta-analytic-predictive approach".
+The repository is used to store the R scripts and the JAGS models (stored in "./jags/") for the paper titled "Incorporating historical control information in ANCOVA models using the meta-analytic-predictive approach". Usages of the R scripts are as follows.
 
 1. simulation_setting.R: the simulation settings. 
 2. current_pooling_simulation.R: simulations for no borrowing and pooling.
